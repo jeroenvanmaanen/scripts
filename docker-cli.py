@@ -18,12 +18,13 @@ def print_list(label, value):
             i += 1
             print_list("{label}[{i}]".format(**locals()), item)
     elif value_type == type({}):
+        dot = label and '.' or ''
         dict_keys = value.keys()[:]
         dict_keys.sort()
         ## print '{label}: {dict_keys}'.format(**locals())
         for key in dict_keys:
             item = value[key]
-            print_list("{label}.{key}".format(**locals()), item)
+            print_list("{label}{dot}{key}".format(**locals()), item)
     else:
         print '{label}: {value}'.format(**locals())
 
@@ -124,6 +125,8 @@ Usage: docker-cli.py [ -k <id-key> [-p[<n>]] ] [--] <command> <argument>...
                 item_id = '#' + repr(i)
             print_list(item_id, item)
             print
+    else:
+        print_list('', result)
 
 # See http://docker-py.readthedocs.org/en/latest/boot2docker/
 kwargs = kwargs_from_env()
