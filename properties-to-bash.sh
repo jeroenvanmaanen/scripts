@@ -14,9 +14,22 @@ function log() {
     "${SILENT}" || echo ">>> $*" >&2
 }
 
+function shell-var() {
+    local VAR="$1"
+    echo "${VAR}" \
+        | sed "${SED_EXT}" \
+            -e 's/([a-z])([A-Z])/\1_\2/g' \
+        | tr 'a-z' 'A-Z' \
+        | tr -sc 'A-Z0-9' '_' \
+        | sed -e 's/_$//'
+}
+
 tr -d '\015' | \
-    sed "${SED_EXT}" -e 's/^([^:]*:[^:]*:[^:]*:) /\1/' -e 's/^([^.:[]*)/\1:/' | \
-    (
+    sed "${SED_EXT}" \
+        -e 's/^([^:]*:[^:]*:[^:]*:) /\1/' \
+        -e '/^[^:]*\[/!s/^([^:]*:)/\1:/' \
+        -e 's/^([^:]*)\[/\1:[/' \
+    | (
         LAST_VAR=''
         COMPLEX=''
         LINES=''
@@ -26,15 +39,12 @@ tr -d '\015' | \
             then
                 COMPLEX="${VAR}"
             else
-                SHELL_VAR="$(echo "${VAR}" | sed "${SED_EXT}" -e 's/([a-z])([A-Z])/\1_\2/g' | tr 'a-z' 'A-Z')"
-                log "TUPLE: [${VAR}] <${COMPLEX}> [${SHELL_VAR}] [${KEY}] [${TYPE}] [${NR}] [${VALUE}]"
+                SHELL_VAR="$(shell-var "${VAR}")"
+                log "TUPLE: [${VAR}] <${COMPLEX}> {${SHELL_VAR}} [${KEY}] <${TYPE}> [#${NR}] [${VALUE}]"
 
                 if [ ".${VAR}" != ".${LAST_VAR}" ]
                 then
-                    if [ ".${VAR}" = ".${COMPLEX}" ]
-                    then
-                        echo "declare -A ${SHELL_VAR}"
-                    elif [ -n "${KEY}" ]
+                    if [ ".${VAR}" != ".${COMPLEX}" -a -n "${KEY}" ]
                     then
                         echo "declare -a ${SHELL_VAR}"
                     fi
@@ -60,14 +70,15 @@ ${VALUE}"
 
                 if expr "${VALUE}" : ".*\\('\\).*" > /dev/null
                 then
-                    VALUE="$(echo "${VALUE}" | sed "${SED_EXT}" -e "s/([\"'\\$])/\\\\\\1/g" -e '1s/^/"/' -e '$s/$/"/')"
+                    VALUE="$(echo "${VALUE}" | sed "${SED_EXT}" -e "s/([\"\\$])/\\\\\\1/g" -e '1s/^/"/' -e '$s/$/"/')"
                 else
                     VALUE="'${VALUE}'"
                 fi
 
                 if [ ".${VAR}" = ".${COMPLEX}" ]
                 then
-                    echo "${SHELL_VAR}['${KEY}']=${VALUE}"
+                    SHELL_VAR="$(shell-var "${VAR}[${KEY}]")"
+                    echo "${SHELL_VAR}=${VALUE}"
                 elif [ -n "${KEY}" ]
                 then
                     echo "${SHELL_VAR}${KEY}=${VALUE}"
