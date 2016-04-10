@@ -14,6 +14,11 @@ function log() {
     "${SILENT}" || echo ">>> $*" >&2
 }
 
+function level() {
+    local VAR="$1"
+    echo "${VAR}" | tr -dc '.[' | wc -c | tr -dc '0-9'
+}
+
 function shell-var() {
     local VAR="$1"
     echo "${VAR}" \
@@ -30,21 +35,23 @@ tr -d '\015' | \
         -e '/^[^:]*\[/!s/^([^:]*:)/\1:/' \
         -e 's/^([^:]*)\[/\1:[/' \
     | (
+        declare -a COMPLEX
         LAST_VAR=''
-        COMPLEX=''
         LINES=''
         while read -r VAR KEY TYPE NR VALUE
         do
+            LEVEL="$(level "${VAR}")"
             if [ ".${TYPE}" = '.complex' ]
             then
-                COMPLEX="${VAR}"
+                COMPLEX[${LEVEL}]="${VAR}"
+                log "TUPLE: [${VAR}] <${COMPLEX[${LEVEL}]}>"
             else
                 SHELL_VAR="$(shell-var "${VAR}")"
-                log "TUPLE: [${VAR}] <${COMPLEX}> {${SHELL_VAR}} [${KEY}] <${TYPE}> [#${NR}] [${VALUE}]"
+                log "TUPLE: [${VAR}] <${COMPLEX[${LEVEL}]}> {${SHELL_VAR}} [${KEY}] |${LEVEL}| <${TYPE}> [#${NR}] [${VALUE}]"
 
                 if [ ".${VAR}" != ".${LAST_VAR}" ]
                 then
-                    if [ ".${VAR}" != ".${COMPLEX}" -a -n "${KEY}" ]
+                    if [ ".${VAR}" != ".${COMPLEX[${LEVEL}]}" -a -n "${KEY}" ]
                     then
                         echo "declare -a ${SHELL_VAR}"
                     fi
@@ -75,7 +82,7 @@ ${VALUE}"
                     VALUE="'${VALUE}'"
                 fi
 
-                if [ ".${VAR}" = ".${COMPLEX}" ]
+                if [ ".${VAR}" = ".${COMPLEX[${LEVEL}]}" ]
                 then
                     SHELL_VAR="$(shell-var "${VAR}[${KEY}]")"
                     echo "${SHELL_VAR}=${VALUE}"
