@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 if [ $# -ne 3 ]
 then
         echo "Usage: $(basename "$0") <ldap-settings> <public-key-directory> <user-id>"
@@ -44,17 +46,19 @@ append-ldap-options -b "${LDAP_SEARCH_BASE}" -s "${LDAP_SCOPE}" -LLL
 LDAP_GROUP_FILTER="(&(objectClass=posixGroup)(memberUid=${USER_ID}))"
 
 # Execute the LDAP search to get groups for the given USER_ID
-GROUPS="$(ldapsearch "${LDAP_OPTIONS[@]}" "${LDAP_GROUP_FILTER}" cn | sed -n -e 's/^cn: *//p' | tr -s '\000- ' ' ' | sed -e 's/ *$//')"
+USER_GROUPS="$(ldapsearch "${LDAP_OPTIONS[@]}" "${LDAP_GROUP_FILTER}" cn | sed -n -e 's/^cn: *//p' | tr -s '\000- ' ' ' | sed -e 's/ *$//')"
 
-if [ -n "${GROUPS}" ]
+if [ -n "${USER_GROUPS}" -a -n "${PUB_KEY_DIR}" ]
 then
     LDAP_PUB_KEY_FILTER="(&(objectclass=ldapPublicKey)(uid=${USER_ID}))"
     PUBLIC_KEY="$(ldapsearch "${LDAP_OPTIONS[@]}" "${LDAP_PUB_KEY_FILTER}" sshPublicKey | sed -n '/^ /{H;d};/sshPublicKey:/x;$g;s/\n *//g;s/sshPublicKey: //gp')"
-    if [ -n "${PUB_KEY_DIR}" ]
+    if [ -n "${PUBLIC_KEY}" ]
     then
-        echo "${PUBLIC_KEY}" > "${PUB_KEY_DIR}/${USER_ID}.pub"
+	PUB_KEY_FILE="${PUB_KEY_DIR}/${USER_ID}.pub"
+        echo "${PUBLIC_KEY}" > "${PUB_KEY_FILE}~"
+	mv "${PUB_KEY_FILE}~" "${PUB_KEY_FILE}"
     fi
 fi
 
 # Return group names for given user UID
-echo "${GROUPS}"
+echo "${USER_GROUPS}"

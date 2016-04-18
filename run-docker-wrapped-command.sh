@@ -18,7 +18,7 @@ do
     fi
     DOCKER_ARGS[${#DOCKER_ARGS[@]}]="${OPT}"
     case "${OPT}" in
-    -e|-v)
+    -e|-v|--link)
         DOCKER_ARGS[${#DOCKER_ARGS[@]}]="$1"
         shift
         ;;
