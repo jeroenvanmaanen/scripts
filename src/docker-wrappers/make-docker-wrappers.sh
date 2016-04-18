@@ -10,7 +10,7 @@ BIN="$(cd "$(dirname "$0")" ; pwd)"
     do
         if [ -f "${IMAGE_NAME}/Dockerfile" ]
         then
-            "${BIN}/make-docker-wrapper.sh" "${IMAGE_NAME}"
+            "${BIN}/make-docker-wrapper.sh" "${IMAGE_NAME}" "$@"
         fi
     done
 )
