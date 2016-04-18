@@ -54,9 +54,9 @@ then
     PUBLIC_KEY="$(ldapsearch "${LDAP_OPTIONS[@]}" "${LDAP_PUB_KEY_FILTER}" sshPublicKey | sed -n '/^ /{H;d};/sshPublicKey:/x;$g;s/\n *//g;s/sshPublicKey: //gp')"
     if [ -n "${PUBLIC_KEY}" ]
     then
-	PUB_KEY_FILE="${PUB_KEY_DIR}/${USER_ID}.pub"
+        PUB_KEY_FILE="${PUB_KEY_DIR}/${USER_ID}.pub"
         echo "${PUBLIC_KEY}" > "${PUB_KEY_FILE}~"
-	mv "${PUB_KEY_FILE}~" "${PUB_KEY_FILE}"
+        mv "${PUB_KEY_FILE}~" "${PUB_KEY_FILE}"
     fi
 fi
 
