@@ -31,4 +31,4 @@ shift
 
 DIR="$(pwd)"
 
-docker run --rm -ti -v "${DIR}:${DIR}" -v "${BIN}:${BIN}" -w "${DIR}" "${DOCKER_ARGS[@]}" "${REPO}/${IMAGE}:${TAG}" "$@"
+docker run --rm -v "${DIR}:${DIR}" -v "${BIN}:${BIN}" -w "${DIR}" "${DOCKER_ARGS[@]}" "${REPO}/${IMAGE}:${TAG}" "$@"
