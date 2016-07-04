@@ -37,22 +37,27 @@ try {
 }
 
 function flatten(object_name, object, consumer) {
-    var prefix = object_name ? (object_name + '.') : '';
     var i;
-    var keys;
+    var itemType;
     var key;
-    var value;
-    var string;
-    var lines;
+    var keys;
     var line_number;
+    var lines;
+    var prefix;
+    var string;
+    var value;
+
+    prefix = object_name ? (object_name + '.') : '';
     if (isArray(object)) {
+        itemType = 'simple';
         for (i = 0; i < object.length; i++) {
             value = object[i];
             if (typeof value === 'object') {
-                consumer(object_name + '[]:complex')
+                itemType = 'complex';
                 break;
             }
         }
+        consumer(object_name + '[]:' + itemType + '::' + object.length);
         for (i = 0; i < object.length; i++) {
             value = object[i];
             flatten(object_name + '[' + i + ']', value, consumer)

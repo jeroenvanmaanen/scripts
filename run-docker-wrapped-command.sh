@@ -7,6 +7,8 @@ set -e
 REPO='jeroenvm'
 TAG='latest'
 
+RM='--rm'
+
 declare -a DOCKER_ARGS
 while [ ".$(expr "$1" : '^\(-\).*$')" = '.-' ]
 do
@@ -16,14 +18,19 @@ do
     then
         break
     fi
-    DOCKER_ARGS[${#DOCKER_ARGS[@]}]="${OPT}"
-    case "${OPT}" in
-    -e|-v|--link)
-        DOCKER_ARGS[${#DOCKER_ARGS[@]}]="$1"
-        shift
-        ;;
-    *)
-    esac
+    if [ ".${OPT}" = ".--keep" ]
+    then
+        RM=''
+    else
+        DOCKER_ARGS[${#DOCKER_ARGS[@]}]="${OPT}"
+        case "${OPT}" in
+        -e|-v|--link|--expose|--name|--net)
+            DOCKER_ARGS[${#DOCKER_ARGS[@]}]="$1"
+            shift
+            ;;
+        *)
+        esac
+    fi
 done
 
 IMAGE="wrapper-$1"
@@ -31,4 +38,5 @@ shift
 
 DIR="$(pwd)"
 
-docker run --rm -v "${DIR}:${DIR}" -v "${BIN}:${BIN}" -w "${DIR}" "${DOCKER_ARGS[@]}" "${REPO}/${IMAGE}:${TAG}" "$@"
+set -x
+docker run ${RM} -v "${DIR}:${DIR}" -v "${BIN}:${BIN}" -w "${DIR}" "${DOCKER_ARGS[@]}" "${REPO}/${IMAGE}:${TAG}" "$@"

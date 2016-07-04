@@ -44,7 +44,12 @@ tr -d '\015' | \
             if [ ".${TYPE}" = '.complex' ]
             then
                 COMPLEX[${LEVEL}]="${VAR}"
-                log "TUPLE: [${VAR}] <${COMPLEX[${LEVEL}]}>"
+                SHELL_VAR="$(shell-var "${VAR}.size")"
+                log "TUPLE: [${VAR}] <${COMPLEX[${LEVEL}]}> {${SHELL_VAR}} <${TYPE}> #${VALUE}"
+                echo "${SHELL_VAR}=${VALUE}"
+            elif [ ".${TYPE}" = '.simple' ]
+            then
+                log "TUPLE: [${VAR}] <${COMPLEX[${LEVEL}]}> {${SHELL_VAR}} <${TYPE}> #${VALUE}"
             else
                 SHELL_VAR="$(shell-var "${VAR}")"
                 log "TUPLE: [${VAR}] <${COMPLEX[${LEVEL}]}> {${SHELL_VAR}} [${KEY}] |${LEVEL}| <${TYPE}> [#${NR}] [${VALUE}]"
