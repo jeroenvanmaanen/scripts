@@ -4,6 +4,22 @@ set -e -x
 
 BIN="$(cd "$(dirname "$0")" ; pwd)"
 
+LINK=''
+if [ ".$1" = '.--link' ]
+then
+    shift
+    LINK="$1"
+    shift
+fi
+
+PUBLIC_PORT=''
+if [ ".$1" = '.--port' ]
+then
+    shift
+    PUBLIC_PORT="$1"
+    shift
+fi
+
 NAME="$1"
 shift
 
@@ -57,6 +73,18 @@ function get-var() {
     local NAME="$1"
     eval "echo \${${NAME}}"
 }
+
+if [ -n "${LINK}" ]
+then
+    add-volume-arg --link
+    add-volume-arg "${LINK}"
+fi
+
+if [ -n "${PUBLIC_PORT}" ]
+then
+    add-volume-arg -p
+    add-volume-arg "${PUBLIC_PORT}"
+fi
 
 INDEX=0
 while [ "${INDEX}" -lt "${FORWARD_SIZE}" ]

@@ -24,7 +24,7 @@ do
     else
         DOCKER_ARGS[${#DOCKER_ARGS[@]}]="${OPT}"
         case "${OPT}" in
-        -e|-v|--link|--expose|--name|--net)
+        -e|-v|--link|--expose|--name|--net|-p)
             DOCKER_ARGS[${#DOCKER_ARGS[@]}]="$1"
             shift
             ;;
