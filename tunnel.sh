@@ -4,21 +4,31 @@ set -e -x
 
 BIN="$(cd "$(dirname "$0")" ; pwd)"
 
-LINK=''
-if [ ".$1" = '.--link' ]
-then
-    shift
-    LINK="$1"
-    shift
-fi
+declare -a DOCKER_ARGS
+declare -a VOLUMES
 
-PUBLIC_PORT=''
-if [ ".$1" = '.--port' ]
-then
+function add-docker-arg() {
+    DOCKER_ARGS[${#DOCKER_ARGS[@]}]="$1"
+}
+
+while [ ".${1#-}" != ".$1" ]
+do
+    OPT="$1"
     shift
-    PUBLIC_PORT="$1"
-    shift
-fi
+    if [ ".${OPT}" = '.--' ]
+    then
+        break;
+    fi
+    case "${OPT}" in
+    --link|-p)
+        add-docker-arg "${OPT}"
+        add-docker-arg "$1"
+        shift
+        ;;
+    *)
+        echo "Usage: $(basename "$0") [ --link <container> | -p [<ip>:]<host-port>:<container-port> ] ..."
+    esac
+done
 
 NAME="$1"
 shift
@@ -40,32 +50,21 @@ FORWARD_SIZE=0
 
 source "${SETTINGS}"
 
-declare -a VOLUMES
-declare -a VOLUME_ARGS
-declare -a EXPOSE_ARGS
-
-
-function add-volume-arg() {
-    VOLUME_ARGS[${#VOLUME_ARGS[@]}]="$1"
-}
-
 function add-volume() {
     local OUTSIDE="$1"
     local INSIDE="${2:-${OUTSIDE}}"
-    add-volume-arg '-v'
-    add-volume-arg "${OUTSIDE}:${INSIDE}"
+    add-docker-arg '-v'
+    add-docker-arg "${OUTSIDE}:${INSIDE}"
     VOLUMES[${#VOLUMES[@]}]="${INSIDE}"
     echo "Added volume ${OUTSIDE}:${INSIDE}" >&2
 }
 
-function add-expose-arg() {
-    EXPOSE_ARGS[${#EXPOSE_ARGS[@]}]="$1"
-}
-
 function add-expose-port() {
     local PORT="$1"
-    add-volume-arg '--expose'
-    add-volume-arg "${PORT}"
+    add-docker-arg '--expose'
+    add-docker-arg "${PORT}"
+    add-docker-arg '-p'
+    add-docker-arg "${PORT}:${PORT}"
     echo "Added expose port ${PORT}" >&2
 }
 
@@ -73,18 +72,6 @@ function get-var() {
     local NAME="$1"
     eval "echo \${${NAME}}"
 }
-
-if [ -n "${LINK}" ]
-then
-    add-volume-arg --link
-    add-volume-arg "${LINK}"
-fi
-
-if [ -n "${PUBLIC_PORT}" ]
-then
-    add-volume-arg -p
-    add-volume-arg "${PUBLIC_PORT}"
-fi
 
 INDEX=0
 while [ "${INDEX}" -lt "${FORWARD_SIZE}" ]
@@ -101,29 +88,8 @@ done
 
 TUNNEL_DIR="$(echo ~/.tunnel)"
 SSH_DIR="$(echo ~/.ssh)"
-add-volume "${TUNNEL_DIR}"
-add-volume "${SSH_DIR}"
+add-volume "/Users"
 add-volume "${SSH_DIR}/known_hosts" '/root/.ssh/known_hosts'
-
-for F in $(find ~/.ssh -type link -print)
-do
-    G="$(readlink -n "${F}")"
-    DIR="$(dirname "${G}")"
-    NEW='true'
-    for V in "${VOLUMES[@]}"
-    do
-        echo "Compare: [${V}]: [${DIR}]"
-        if [ ".${V}" = ".${DIR}" ]
-        then
-            NEW='false'
-            break
-        fi
-    done
-    if "${NEW}"
-    then
-        add-volume "${DIR}" "${DIR}"
-    fi
-done
 
 CONTAINER_NAME="tunnel-${NAME}"
 
@@ -133,8 +99,6 @@ docker rm "${CONTAINER_NAME}" || true
 "${BIN}/run-docker-wrapped-command.sh" \
     -d --keep \
     --name "${CONTAINER_NAME}" \
-    "${VOLUME_ARGS[@]}" \
-    "${EXPOSE_ARGS[@]}" \
+    "${DOCKER_ARGS[@]}" \
     ssh \
     "${BIN}/tunnel-helper.sh" --dir "${TUNNEL_DIR}" "${NAME}" "$@"
-##    ls -l "${SSH_DIR}" /Volumes/Keys/ssh
