@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -x
-
 FIND_EXT_BEFORE=()
 FIND_EXT_AFTER=(--regex-type posix-egrep)
 case $(uname) in
