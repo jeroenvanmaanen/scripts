@@ -4,6 +4,12 @@ set -e
 
 BIN="$(cd "$(dirname "$0")" ; pwd)"
 
+IMAGE='nodejs'
+if [ ".$(basename "$0" .sh)" = '.gulp4.sh' ]
+then
+    IMAGE='nodejs4'
+fi
+
 function log() {
     local LEVEL="$1"
     shift
@@ -26,4 +32,4 @@ then
     error Missing gulp package
 fi
 
-"${BIN}/run-docker-wrapped-command.sh" nodejs "${GULP}" "$@"
+"${BIN}/run-docker-wrapped-command.sh" "${IMAGE}" "${GULP}" "$@"

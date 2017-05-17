@@ -21,6 +21,9 @@ do
     if [ ".${OPT}" = ".--keep" ]
     then
         RM=''
+    elif [ ".${OPT}" = ".--verbose" ]
+    then
+        set -x
     else
         DOCKER_ARGS[${#DOCKER_ARGS[@]}]="${OPT}"
         case "${OPT}" in
@@ -38,5 +41,4 @@ shift
 
 DIR="$(pwd)"
 
-set -x
 docker run ${RM} -v "${DIR}:${DIR}" -v "${BIN}:${BIN}" -w "${DIR}" "${DOCKER_ARGS[@]}" "${REPO}/${IMAGE}:${TAG}" "$@"

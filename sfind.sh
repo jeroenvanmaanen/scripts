@@ -12,4 +12,4 @@ done
 ## do
 ##	echo ">> $D" >&2
 ## done
-find -E "${PATHS[@]}" \( -type d \( -name .svn -o -name tmp \) -prune \! -type d \) -o \( \( \! -type d -o \! -name .svn \) "$@" \)
+/usr/bin/find -E "${PATHS[@]}" \( -type d \( -name .svn -o -name tmp \) -prune \! -type d \) -o \( \( \! -type d -o \! -name .svn \) "$@" \)
