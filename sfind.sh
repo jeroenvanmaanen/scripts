@@ -1,7 +1,7 @@
 #!/bin/bash
 
 FIND_EXT_BEFORE=()
-FIND_EXT_AFTER=(--regex-type posix-egrep)
+FIND_EXT_AFTER=(-regextype posix-egrep)
 case $(uname) in
 Darwin*)
     FIND_EXT_BEFORE=(-E)
