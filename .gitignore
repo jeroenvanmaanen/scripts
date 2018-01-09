@@ -1,4 +1,5 @@
 .idea
+.*.swp
 *.iml
 *.pyc
 /target
