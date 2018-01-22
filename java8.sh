@@ -26,4 +26,4 @@ then
     shift
 fi
 
-docker run -v "${CURRENT}:${CURRENT}" -w "${CURRENT}" "$@" --user "$(id -u)" openjdk:8-jre-alpine java "${JRE_FLAGS[@]}"
+docker run --rm -v "${CURRENT}:${CURRENT}" -w "${CURRENT}" "$@" --user "$(id -u)" openjdk:8-jre-alpine java "${JRE_FLAGS[@]}"
