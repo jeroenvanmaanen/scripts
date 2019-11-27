@@ -12,7 +12,7 @@ TAB="$(echo -ne '\011')"
 
 function extend-sort-key() {
     local KEY="$1"
-    sed -e "s/${TAB}/#$KEY\011/"
+    sed -e "s/${TAB}/#${KEY}${TAB}/"
 }
 
 cat Alle_rekeningen* | head -1 | tr ',' '\011'
