@@ -15,7 +15,7 @@ log "PATTERN=[${PATTERN}]"
 
 if "${SILENT}"
 then
-  FILTER='/[a-z]/'
+  FILTER='/[a-z_]/'
 else
   FILTER=''
 fi

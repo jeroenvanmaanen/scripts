@@ -1,6 +1,6 @@
 function get_duration(start_minutes, end_minutes) {
     if (start_minutes < 11*60 && end minutes > 13.5 * 60 && end_minutes - start_minutes > 5 * 60) {
-        print "----";
+        print "_\nLunch break";
         return end_minutes - start_minutes - 30;
     } else {
         return end_minutes - start_minutes;
