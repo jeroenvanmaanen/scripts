@@ -4,4 +4,11 @@ BIN="$(cd "$(dirname "$0")" ; pwd)"
 
 mkdir -p ~/log
 
-echo "$(date '+%Y-%m'-%dT%H:%M:%S) - $("${BIN}/osx-get-ssid.sh")" >> ~/log/active.log
+function get-search-domain() {
+	if [[ -f /etc/resolv/conf ]]
+	then
+		sed -n -e 's/^search[ 	]*//p' /etc/resolv.conf | head -1
+	fi
+}
+
+echo "$(date '+%Y-%m-%dT%H:%M:%S %U') - $("${BIN}/osx-get-ssid.sh") $(get-search-domain)" >> ~/log/active.log
