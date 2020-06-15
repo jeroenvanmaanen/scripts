@@ -20,6 +20,8 @@ else
   FILTER=''
 fi
 
-sed -e "/${PATTERN}/!d" -e 's/:[0-9][0-9] / /' -e 's/T/|/' -e 's/:/|/' -e 's/ /|/' -e 's/ .*//' "${FILE}" \
+cat "${FILE}" \
+  | tr 'A-Z' 'a-z' \
+  | sed -e "/${PATTERN}/!d" -e 's/:[0-9][0-9] / /' -e 's/t/|/' -e 's/:/|/' -e 's/ /|/' -e 's/ .*//' \
   | awk -f "${BIN}/active-summarize.awk" \
   | sed -n -e "${FILTER}p"

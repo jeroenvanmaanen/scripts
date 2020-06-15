@@ -1,8 +1,11 @@
 function get_duration(start_minutes, end_minutes) {
-    if (start_minutes < 11*60 && end minutes > 13.5 * 60 && end_minutes - start_minutes > 5 * 60) {
+    start_hour = start_minutes / 60;
+    end_hour = end_minutes / 60;
+    if (start_hour < 11 && end_hour > 13.5 && end_hour - start_hour > 5) {
         print "_\nLunch break";
         return end_minutes - start_minutes - 30;
     } else {
+        printf "start_hour: %s: end_hour: %s\n", start_hour, end_hour
         return end_minutes - start_minutes;
     }
 }
