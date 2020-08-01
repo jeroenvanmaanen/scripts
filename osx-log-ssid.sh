@@ -5,9 +5,9 @@ BIN="$(cd "$(dirname "$0")" ; pwd)"
 mkdir -p ~/log
 
 function get-search-domain() {
-	if [[ -f /etc/resolv/conf ]]
+	if [[ -r /etc/resolv.conf ]]
 	then
-		sed -n -e 's/^search[ 	]*//p' /etc/resolv.conf | head -1
+		sed -n -e 's/^search[ 	]*//p' -e 's/^domain[ 	]*//p' /etc/resolv.conf | head -1
 	fi
 }
 
