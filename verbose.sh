@@ -42,4 +42,9 @@ then
         fi
 fi
 
+if [ ".$1" = '.--' ]
+then
+    shift
+fi
+
 trace FLAGS_INHERIT: "${FLAGS_INHERIT[@]}"

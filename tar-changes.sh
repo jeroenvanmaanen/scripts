@@ -15,6 +15,12 @@ Darwin*)
 esac
 export SED_EXT
 
+if [ -z "${TMP}" ]
+then
+	TMP="${HOME}/tmp"
+	mkdir -p "${TMP}"
+fi
+
 PROJECT="$(basename "$(pwd)")"
 ARCHIVE="${TMP}/${PROJECT}-changes-$(date '+%Y%m%dT%H%M%S').tar.gz"
 
