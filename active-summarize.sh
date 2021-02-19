@@ -11,6 +11,13 @@ log "$(wc -l "${FILE}")"
 
 PATTERN="$1" ; shift
 
+if [ -z "${PATTERN}" ]
+then
+	PATTERN="$(cat ~/.active-summatize-pattern)"
+else
+	echo "${PATTERN}" > ~/.active-summatize-pattern
+fi
+
 log "PATTERN=[${PATTERN}]"
 
 if "${SILENT}"
