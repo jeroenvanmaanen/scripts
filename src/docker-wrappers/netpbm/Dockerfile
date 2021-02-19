@@ -1,4 +1,4 @@
-FROM ubuntu
+FROM debian
 
 RUN apt-get update
-RUN apt-get install libjpeg-progs netpbm
+RUN apt-get install -y libjpeg-progs ghostscript netpbm
