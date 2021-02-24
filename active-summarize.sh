@@ -13,9 +13,9 @@ PATTERN="$1" ; shift
 
 if [ -z "${PATTERN}" ]
 then
-	PATTERN="$(cat ~/log/active-summatize-pattern)"
+	PATTERN="$(cat ~/log/active-summarize-pattern)"
 else
-	echo "${PATTERN}" > ~/log/active-summatize-pattern
+	echo "${PATTERN}" > ~/log/active-summarize-pattern
 fi
 
 log "PATTERN=[${PATTERN}]"
