@@ -11,4 +11,4 @@ function get-search-domain() {
 	fi
 }
 
-echo "$(date '+%Y-%m-%dT%H:%M:%S %U') - $("${BIN}/osx-get-ssid.sh") $(get-search-domain)" >> ~/log/active.log
+echo "$(date '+%Y-%m-%dT%H:%M:%S %U') - $("${BIN}/osx-get-ssid.sh") $(get-search-domain) $(cat "${HOME}/log/time-type")" >> ~/log/active.log
