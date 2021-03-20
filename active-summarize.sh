@@ -29,6 +29,6 @@ fi
 
 cat "${FILE}" \
   | tr 'A-Z' 'a-z' \
-  | sed -e "/${PATTERN}/!d" -e 's/:[0-9][0-9] / /' -e 's/t/|/' -e 's/:/|/' -e 's/ /|/' -e 's/ .*//' \
-  | awk -f "${BIN}/active-summarize.awk" \
+  | sed -e 's/:[0-9][0-9] / /' -e 's/t/|/' -e 's/:/|/' -e 's/ /|/' -e 's/ -* */|/' \
+  | awk -v "pattern=${PATTERN}" -f "${BIN}/active-summarize.awk" \
   | sed -n -e "${FILTER}p"
