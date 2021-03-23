@@ -27,7 +27,11 @@ else
   FILTER=''
 fi
 
-cat "${FILE}" \
+NOW="$(date '+%Y-%m-%dT%H:%M:%S %U')"
+FINAL="${NOW} - ${PATTERN}
+${NOW} - ~"
+
+( cat "${FILE}" ; echo "${FINAL}" ) \
   | tr 'A-Z' 'a-z' \
   | sed -e 's/:[0-9][0-9] / /' -e 's/t/|/' -e 's/:/|/' -e 's/ /|/' -e 's/ -* */|/' \
   | awk -v "pattern=${PATTERN}" -f "${BIN}/active-summarize.awk" \
