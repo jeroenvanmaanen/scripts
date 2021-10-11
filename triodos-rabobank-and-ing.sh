@@ -37,7 +37,7 @@ function extend-sort-key() {
 (
   cat Alle_rekeningen* | head -1 | tr ';' '\011' | tr -d '"' | sed -e 's/Mutatiesoort/MutatieSoort/'
   (
-      cat Alle_rekeningen* | "${BIN}/csv-to-flat.sh" -d ';' | "${BIN}/flat-to-tsv.sh" | tail +2
+      cat Alle_rekeningen* | "${BIN}/csv-to-flat.sh" -d ';' | egrep -v '^[^[]*[[]1[01]:' | "${BIN}/flat-to-tsv.sh" | tail +2
       cat mutations* | "${BIN}/triodos-to-ing.sh" | extend-sort-key 'a'
       cat CSV_* | "${BIN}/rabobank-to-ing.sh" | extend-sort-key 'b'
   ) | sort \
