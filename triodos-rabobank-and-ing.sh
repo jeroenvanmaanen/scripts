@@ -43,6 +43,6 @@ function extend-sort-key() {
   ) | sort \
     | sed -e "/^[^${TAB}]*#/s/#[^${TAB}]*//" \
     | "${BIN}/swap-IJ-and-P.sh"
-
+) | redirect-output
 
 #EOF
