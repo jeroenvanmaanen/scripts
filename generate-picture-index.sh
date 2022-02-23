@@ -40,7 +40,7 @@ img {
 img:hover {
   border: 2px solid black;
 }
-.float-box {
+#float-box {
     position: fixed;
     bottom: 10px;
     right: 10px;
@@ -53,6 +53,11 @@ img:hover {
 }
 .fixed-height {
     height: 600px;
+}
+.max-size {
+    width: 86%;
+    height: 86%;
+    overflow: scroll;
 }
 .hidden {
     display: none;
@@ -91,12 +96,23 @@ function toggleFixedAspect(event) {
         image.className = 'fixed-width';
     }
 }
+function toggleMinMax(event) {
+    const floatBox = document.getElementById('float-box');
+    const oldClass = floatBox.className;
+    if (oldClass === 'max-size') {
+        floatBox.className = '';
+    } else {
+        floatBox.className = 'max-size';
+    }
+}
 function onLoad() {
     console.log("On load event handler")
     const toggle = document.getElementById('toggle');
     toggle.onclick = toggleInnerBox
     const aspectToggle = document.getElementById('aspect-toggle');
     aspectToggle.onclick = toggleFixedAspect
+    const minMaxToggle = document.getElementById('min-max');
+    minMaxToggle.onclick = toggleMinMax
     const collection = document.getElementsByTagName("img");
     var l = collection.length;
     for (var i = 0; i < l; i++) {
@@ -119,7 +135,7 @@ cat <<EOT
 
 <body onload="onLoad()">
 
-<div class='float-box'><div id='inner-box' class='hidden'><span id='image-label'>XXX</span><br/><image id='selected-image' class='fixed-width' src='#'/></div><span id='toggle'>^</span> <span id='aspect-toggle'>@</span></div>
+<div id='float-box'><div id='inner-box' class='hidden'><span id='image-label'>XXX</span><br/><image id='selected-image' class='fixed-width' src='#'/></div><span id='toggle'>^</span> <span id='aspect-toggle'>@</span> <span id='min-max'>M</span></div>
 
 EOT
 
