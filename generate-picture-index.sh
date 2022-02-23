@@ -59,6 +59,9 @@ img:hover {
     height: 86%;
     overflow: scroll;
 }
+.upside-down {
+    transform: rotate(180deg);
+}
 .hidden {
     display: none;
 }
@@ -69,7 +72,10 @@ function clickOnImage(event) {
     const imagePath = event.target.getAttribute('title');
     console.log('Click on image:', imagePath);
     if (imagePath){
+        const floatBox = document.getElementById('float-box');
+        floatBox.className = '';
         const selectedImage = document.getElementById('selected-image');
+        selectedImage.className = 'fixed-width';
         selectedImage.setAttribute('src', imagePath);
         const imageLabel = document.getElementById('image-label');
         imageLabel.innerHTML = imagePath;
@@ -88,21 +94,65 @@ function toggleInnerBox(event) {
     }
 }
 function toggleFixedAspect(event) {
+    const floatBox = document.getElementById('float-box');
+    const floatClass = floatBox.className;
     const image = document.getElementById('selected-image');
     const oldClass = image.className;
-    if (oldClass === 'fixed-width') {
-        image.className = 'fixed-height';
-    } else {
-        image.className = 'fixed-width';
+    if (floatClass !== 'max-size') {
+        if (oldClass === 'fixed-width') {
+            image.className = 'fixed-height';
+        } else {
+            image.className = 'fixed-width';
+        }
     }
 }
 function toggleMinMax(event) {
     const floatBox = document.getElementById('float-box');
     const oldClass = floatBox.className;
+    const image = document.getElementById('selected-image');
     if (oldClass === 'max-size') {
         floatBox.className = '';
+        image.className = 'fixed-width';
     } else {
         floatBox.className = 'max-size';
+        image.className = '';
+    }
+}
+function enlarge() {
+    const floatBox = document.getElementById('float-box');
+    const floatClass = floatBox.className;
+    const image = document.getElementById('selected-image');
+    console.log('Enlarge:', floatClass);
+    if (floatClass === 'max-size') {
+        var oldWidth = image.width;
+        console.log('Enlarge: old width:', oldWidth);
+        image.width = oldWidth / 0.7;
+    }
+}
+function shrink() {
+    const floatBox = document.getElementById('float-box');
+    const floatClass = floatBox.className;
+    const image = document.getElementById('selected-image');
+    console.log('Shrink:', floatClass);
+    if (floatClass === 'max-size') {
+        var oldWidth = image.width;
+        console.log('Shrink: old width:', oldWidth);
+        if (oldWidth > 10) {
+          image.width = image.width * 0.7;
+        }
+    }
+}
+function upsideDown() {
+    const floatBox = document.getElementById('float-box');
+    const floatClass = floatBox.className;
+    const image = document.getElementById('selected-image');
+    const oldClass = image.className;
+    if (floatClass === 'max-size') {
+        if (oldClass === '') {
+            image.className = 'upside-down';
+        } else {
+            image.className = '';
+        }
     }
 }
 function onLoad() {
@@ -113,6 +163,12 @@ function onLoad() {
     aspectToggle.onclick = toggleFixedAspect
     const minMaxToggle = document.getElementById('min-max');
     minMaxToggle.onclick = toggleMinMax
+    const enlargeControl = document.getElementById('enlarge');
+    enlargeControl.onclick = enlarge;
+    const shrinkControl = document.getElementById('shrink');
+    shrinkControl.onclick = shrink;
+    const flipControl = document.getElementById('upside-down');
+    flipControl.onclick = upsideDown;
     const collection = document.getElementsByTagName("img");
     var l = collection.length;
     for (var i = 0; i < l; i++) {
@@ -135,7 +191,19 @@ cat <<EOT
 
 <body onload="onLoad()">
 
-<div id='float-box'><div id='inner-box' class='hidden'><span id='image-label'>XXX</span><br/><image id='selected-image' class='fixed-width' src='#'/></div><span id='toggle'>^</span> <span id='aspect-toggle'>@</span> <span id='min-max'>M</span></div>
+<div id='float-box'>
+  <div id='inner-box' class='hidden'>
+    <span id='image-label'>XXX</span><br/><image id='selected-image' class='fixed-width' src='#'/>
+  </div>
+  <div>
+    <span id='toggle'>^</span>
+    <span id='aspect-toggle'>@</span>
+    <span id='min-max'>M</span>
+    <span id='enlarge'>+</span>
+    <span id='shrink'>—</span>
+    <span id='upside-down'>F</span>
+  </div>
+</div>
 
 EOT
 
