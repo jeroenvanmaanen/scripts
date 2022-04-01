@@ -8,12 +8,20 @@ while [ "//${1#-}" != "//$1" ]
 do
 	OPT="$1"
 	shift
-	OPTS[$N]="$OPT"
-	N=$[$N+1]
 	case "$OPT" in
-	-d|-k)	OPTS[$N]="$1"
-		shift
+	-d)
+	  OPTS[$N]='-v'
 		N=$[$N+1]
+		OPTS[$N]="delim=$1"
+		N=$[$N+1]
+		shift
+		;;
+	-k)
+	  OPTS[$N]='-v'
+		N=$[$N+1]
+		OPTS[$N]="key_indices=$1"
+		N=$[$N+1]
+		shift
 		;;
 	--)	shift
 		break
@@ -37,4 +45,4 @@ done
 ## done
 		
 
-"$BIN/utf8-bom-remove.sh" "$@" | "$BIN/csv-to-flat.php" -- "${OPTS[@]}"
+"$BIN/utf8-bom-remove.sh" "$@" | awk "${OPTS[@]}" -f "$BIN/csv-to-flat.awk" -
