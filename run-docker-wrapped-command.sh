@@ -2,6 +2,8 @@
 
 BIN="$(cd "$(dirname "$0")" ; pwd)"
 
+# Refactor this to use lib-docker-wrapper.sh (or, even better, refactor the scripts that call this).
+
 set -e
 
 REPO='jeroenvm'
