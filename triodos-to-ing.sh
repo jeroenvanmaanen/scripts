@@ -26,6 +26,7 @@ MUTATIONS_HEADER='"Datum","Rekening","Bedrag (EUR)","Af Bij","Naam / Omschrijvin
         -e 's/^([^[]*)[[]5:(Naam)/\1[2:\2/' \
         -e 's/^([^[]*)[[]6:(Tegenrekening)/\1[4:\2/' \
         -e 's/^([^[]*)[[]7:(Code)/\1[5:\2/' \
+        -e '/^([^[]*)[[]9:/d' \
         -e 's/^([^[]*)[[]8:(Mededelingen)/\1[9:\2/' \
         -e 's/^([^[]*)[[](.*)/\1:\2/' \
         -e 's/^([^[]*)[]]:: (.*)/\1:\2/' \
@@ -36,7 +37,7 @@ MUTATIONS_HEADER='"Datum","Rekening","Bedrag (EUR)","Af Bij","Naam / Omschrijvin
         while read DATE FIELD_NR FIELD_NAME VALUE
         do
             ## echo "DATE=[${DATE}]" >&2
-            ## echo "FIELD_NR=[${FIELD_NR}]" >&2
+            ## echo "FIELD_NR=[${FIELD_NR}] [${VALUE}]" >&2
             if [ -z "${FIELD_NR}" ]
             then
                 echo -en "${ROW[1]}\011"
