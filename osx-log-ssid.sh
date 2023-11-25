@@ -11,4 +11,13 @@ function get-search-domain() {
 	fi
 }
 
-echo "$(date '+%Y-%m-%dT%H:%M:%S %U') - $("${BIN}/osx-get-ssid.sh") $(get-search-domain) $(cat "${HOME}/log/time-type")" >> ~/log/active.log
+NOW_TIMESTAMP="$(date '+%Y-%m-%dT%H:%M:%S %U')"
+SSID="$("${BIN}/osx-get-ssid.sh")"
+SEARCH_DOMAIN="$(get-search-domain)"
+TIME_TYPE="$(cat "${HOME}/log/time-type")"
+
+echo "${NOW_TIMESTAMP} - ${SSID} ${SEARCH_DOMAIN} ${TIME_TYPE}" >> ~/log/active.log
+
+(
+  tar -C ~/log -cf - . | tar -C ~/Dropbox/TFG/log -xf -
+) || true
