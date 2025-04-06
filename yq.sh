@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker run --rm -i karlkfi/yq "$@"
+docker run --rm -i mikefarah/yq "$@"
